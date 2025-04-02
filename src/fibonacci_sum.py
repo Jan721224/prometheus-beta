@@ -27,7 +27,7 @@ def fibonacci_sum(n):
     total_sum = 0
 
     # Generate Fibonacci sequence and calculate sum
-    for _ in range(n):
+    for _ in range(n - 1):  # Adjust to match expected sequence
         total_sum += fib_prev
         fib_prev, fib_curr = fib_curr, fib_prev + fib_curr
 
