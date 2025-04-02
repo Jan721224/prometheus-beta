@@ -46,6 +46,35 @@ def cleanRoom(grid: List[List[int]], r: int, c: int, direction: int) -> int:
                 0 <= y < len(grid[0]) and 
                 grid[x][y] == 0)
     
+    def can_reach_empty_cell(x: int, y: int) -> bool:
+        """Check if the current position can reach any empty cell"""
+        visited_in_check = set()
+        def dfs_check(curr_x: int, curr_y: int) -> bool:
+            if (curr_x, curr_y) in visited_in_check:
+                return False
+            
+            if grid[curr_x][curr_y] == 0 and (curr_x, curr_y) != (x, y):
+                return True
+            
+            visited_in_check.add((curr_x, curr_y))
+            
+            for dx, dy in directions:
+                new_x, new_y = curr_x + dx, curr_y + dy
+                if (0 <= new_x < len(grid) and 
+                    0 <= new_y < len(grid[0]) and 
+                    grid[new_x][new_y] == 0 and 
+                    (new_x, new_y) not in visited_in_check):
+                    if dfs_check(new_x, new_y):
+                        return True
+            
+            return False
+        
+        return dfs_check(x, y)
+    
+    # If starting cell cannot reach any other empty cell
+    if not can_reach_empty_cell(r, c):
+        return -1
+    
     def dfs(x: int, y: int, current_dir: int, steps: int) -> int:
         """Depth-first search to clean the room"""
         # Mark current cell as visited if it's empty
