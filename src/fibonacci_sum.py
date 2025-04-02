@@ -23,12 +23,13 @@ def fibonacci_sum(n):
         return 1
 
     # Initialize Fibonacci sequence and sum
-    fib_prev, fib_curr = 0, 1
-    total_sum = 0
+    fib_sequence = [0, 1]
+    total_sum = 1  # Start with 1 to account for first Fibonacci number
 
-    # Generate Fibonacci sequence and calculate sum
-    for _ in range(n - 1):  # Adjust to match expected sequence
-        total_sum += fib_prev
-        fib_prev, fib_curr = fib_curr, fib_prev + fib_curr
+    # Generate Fibonacci sequence
+    while len(fib_sequence) < n:
+        next_fib = fib_sequence[-1] + fib_sequence[-2]
+        fib_sequence.append(next_fib)
+        total_sum += next_fib
 
     return total_sum
