@@ -27,7 +27,10 @@ def search_matrix(matrix, target):
         False
     """
     # Validate input
-    if not isinstance(matrix, list) or not matrix:
+    if not isinstance(matrix, list):
+        raise TypeError("Matrix must be a list of lists")
+    
+    if not matrix:
         return False
     
     if not all(isinstance(row, list) for row in matrix):
