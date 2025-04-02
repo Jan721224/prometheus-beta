@@ -5,13 +5,13 @@ def test_fibonacci_sum_basic():
     """Test basic functionality with different positive integers."""
     assert fibonacci_sum(1) == 0  # First Fibonacci number is 0
     assert fibonacci_sum(2) == 1  # Sum of first two is 0 + 1 = 1
-    assert fibonacci_sum(3) == 1  # 0 + 1 + 1 = 2
+    assert fibonacci_sum(3) == 2  # 0 + 1 + 1 = 2
     assert fibonacci_sum(5) == 7  # 0 + 1 + 1 + 2 + 3 = 7
 
 def test_fibonacci_sum_larger_numbers():
     """Test sum of Fibonacci numbers for larger inputs."""
-    assert fibonacci_sum(10) == 88  # Verified through calculation
-    assert fibonacci_sum(15) == 610  # Verified through calculation
+    assert fibonacci_sum(10) == 88  # Sum of first 10 Fibonacci numbers
+    assert fibonacci_sum(15) == 986  # Sum of first 15 Fibonacci numbers
 
 def test_fibonacci_sum_invalid_inputs():
     """Test error handling for invalid inputs."""
