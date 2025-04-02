@@ -29,27 +29,35 @@ def find_shortest_palindrome_substrings(s: str) -> list[str]:
     if not s:
         return []
     
-    # Find all palindromic substrings
-    palindromes = []
+    # Find the shortest palindromes efficiently
+    def is_palindrome(substr):
+        return substr == substr[::-1]
     
-    # Check single character palindromes first
-    shortest_length = 1
+    # Start with single characters
+    shortest_palindromes = []
+    current_min_length = 1
     
     # Iterate through all possible substrings
-    for i in range(len(s)):
-        for j in range(i, len(s)):
-            substring = s[i:j+1]
+    for length in range(1, len(s) + 1):
+        found_palindromes = set()
+        for i in range(len(s) - length + 1):
+            substring = s[i:i+length]
             
             # Check if substring is a palindrome
-            if substring == substring[::-1]:
-                # If we find a shorter palindrome, reset the list
-                if len(substring) < shortest_length:
-                    palindromes = [substring]
-                    shortest_length = len(substring)
-                # If it's the same length as current shortest, add to list
-                elif len(substring) == shortest_length:
-                    # Avoid duplicates
-                    if substring not in palindromes:
-                        palindromes.append(substring)
+            if is_palindrome(substring):
+                found_palindromes.add(substring)
+        
+        # If we found any palindromes of this length
+        if found_palindromes:
+            # If these palindromes are shorter than previous ones
+            if length < current_min_length:
+                shortest_palindromes = list(found_palindromes)
+                current_min_length = length
+            # If these palindromes are the same length as shortest
+            elif length == current_min_length:
+                shortest_palindromes.extend(found_palindromes)
+            # If we've gone beyond the shortest length, we can stop
+            else:
+                break
     
-    return sorted(set(palindromes))
+    return sorted(set(shortest_palindromes))
