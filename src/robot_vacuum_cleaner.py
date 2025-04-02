@@ -32,8 +32,7 @@ def cleanRoom(grid: List[List[int]], r: int, c: int, direction: int) -> int:
     # Directions: North, East, South, West
     directions = [(-1, 0), (0, 1), (1, 0), (0, -1)]
     
-    # Track visited cells and total cleaned cells
-    visited = set()
+    # Track total empty cells
     total_empty_cells = sum(row.count(0) for row in grid)
     
     # Special case for single-cell room
@@ -44,42 +43,40 @@ def cleanRoom(grid: List[List[int]], r: int, c: int, direction: int) -> int:
     if total_empty_cells == 0:
         return -1
     
-    def is_valid_move(x: int, y: int) -> bool:
-        """Check if a move is valid (within grid and not an obstacle)"""
-        return (0 <= x < len(grid) and 
-                0 <= y < len(grid[0]) and 
-                grid[x][y] == 0)
-    
-    def can_reach_empty_cell(x: int, y: int) -> bool:
-        """Check if the current position can reach any empty cell"""
-        visited_in_check = set()
-        def dfs_check(curr_x: int, curr_y: int) -> bool:
-            if (curr_x, curr_y) in visited_in_check:
-                return False
+    def is_connected_empty_cells() -> bool:
+        """Check if empty cells form a connected component"""
+        def dfs(x: int, y: int, visited: set) -> None:
+            if (x, y) in visited or x < 0 or x >= len(grid) or y < 0 or y >= len(grid[0]) or grid[x][y] == 1:
+                return
             
-            if grid[curr_x][curr_y] == 0 and (curr_x, curr_y) != (x, y):
-                return True
-            
-            visited_in_check.add((curr_x, curr_y))
+            visited.add((x, y))
             
             for dx, dy in directions:
-                new_x, new_y = curr_x + dx, curr_y + dy
-                if (0 <= new_x < len(grid) and 
-                    0 <= new_y < len(grid[0]) and 
-                    grid[new_x][new_y] == 0 and 
-                    (new_x, new_y) not in visited_in_check):
-                    if dfs_check(new_x, new_y):
-                        return True
-            
+                dfs(x + dx, y + dy, visited)
+        
+        # Find first empty cell
+        start = None
+        for i in range(len(grid)):
+            for j in range(len(grid[0])):
+                if grid[i][j] == 0:
+                    start = (i, j)
+                    break
+            if start:
+                break
+        
+        if not start:
             return False
         
-        return dfs_check(x, y)
+        visited = set()
+        dfs(start[0], start[1], visited)
+        
+        return len(visited) == total_empty_cells
     
-    # If starting cell cannot reach any other empty cell
-    if not can_reach_empty_cell(r, c):
+    # If empty cells are not connected, return -1
+    if not is_connected_empty_cells():
         return -1
     
-    def dfs(x: int, y: int, current_dir: int, steps: int) -> int:
+    def dfs(x: int, y: int, current_dir: int, steps: int, visited: set) -> int:
         """Depth-first search to clean the room"""
         # Mark current cell as visited if it's empty
         if grid[x][y] == 0:
@@ -98,15 +95,18 @@ def cleanRoom(grid: List[List[int]], r: int, c: int, direction: int) -> int:
             new_x, new_y = x + dx, y + dy
             
             # Check if move is valid and not already visited
-            if is_valid_move(new_x, new_y) and (new_x, new_y) not in visited:
+            if (0 <= new_x < len(grid) and 
+                0 <= new_y < len(grid[0]) and 
+                grid[new_x][new_y] == 0 and 
+                (new_x, new_y) not in visited):
                 # Recursively explore this path
-                result = dfs(new_x, new_y, new_dir, steps + 1)
+                result = dfs(new_x, new_y, new_dir, steps + 1, visited.copy())
                 min_steps = min(min_steps, result)
         
         return min_steps
     
     # Start cleaning from the initial position
-    result = dfs(r, c, direction, 0)
+    result = dfs(r, c, direction, 0, set())
     
     # If not all cells could be cleaned or no path found
-    return result if result != float('inf') and len(visited) == total_empty_cells else -1
+    return result if result != float('inf') else -1
