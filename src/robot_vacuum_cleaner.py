@@ -36,6 +36,10 @@ def cleanRoom(grid: List[List[int]], r: int, c: int, direction: int) -> int:
     visited = set()
     total_empty_cells = sum(row.count(0) for row in grid)
     
+    # Special case for single-cell room
+    if total_empty_cells == 1 and grid[r][c] == 0:
+        return 0
+    
     # If no empty cells, return -1
     if total_empty_cells == 0:
         return -1
