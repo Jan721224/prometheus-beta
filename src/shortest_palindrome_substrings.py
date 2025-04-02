@@ -29,35 +29,31 @@ def find_shortest_palindrome_substrings(s: str) -> list[str]:
     if not s:
         return []
     
-    # Find the shortest palindromes efficiently
-    def is_palindrome(substr):
-        return substr == substr[::-1]
+    # Dictionary to store palindromes by length
+    palindrome_dict = {}
     
-    # Start with single characters
-    shortest_palindromes = []
-    current_min_length = 1
-    
-    # Iterate through all possible substrings
+    # Check palindromes from 1 to entire string length
     for length in range(1, len(s) + 1):
-        found_palindromes = set()
+        current_palindromes = set()
+        
+        # Sliding window to find palindromes of current length
         for i in range(len(s) - length + 1):
             substring = s[i:i+length]
             
             # Check if substring is a palindrome
-            if is_palindrome(substring):
-                found_palindromes.add(substring)
+            if substring == substring[::-1]:
+                current_palindromes.add(substring)
         
-        # If we found any palindromes of this length
-        if found_palindromes:
-            # If these palindromes are shorter than previous ones
-            if length < current_min_length:
-                shortest_palindromes = list(found_palindromes)
-                current_min_length = length
-            # If these palindromes are the same length as shortest
-            elif length == current_min_length:
-                shortest_palindromes.extend(found_palindromes)
-            # If we've gone beyond the shortest length, we can stop
-            else:
+        # If we found palindromes of this length, store and break 
+        # if we've already found palindromes of shorter lengths
+        if current_palindromes:
+            # If no previous palindromes exist, save these
+            if not palindrome_dict:
+                palindrome_dict[length] = list(current_palindromes)
+            # If these are the first palindromes of this length
+            elif length <= min(palindrome_dict.keys()):
+                palindrome_dict = {length: list(current_palindromes)}
                 break
     
-    return sorted(set(shortest_palindromes))
+    # Return the shortest palindromes
+    return sorted(set(palindrome_dict[min(palindrome_dict.keys())]))
