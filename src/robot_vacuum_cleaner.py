@@ -43,9 +43,13 @@ def cleanRoom(grid: List[List[int]], r: int, c: int, direction: int) -> int:
     if total_empty_cells == 0:
         return -1
     
-    def can_move(x: int, y: int) -> bool:
-        """Check if starting cell can move to any other empty cell"""
-        # Breadth-first search to check if we can reach any other empty cell
+    def can_reach_empty_cell(x: int, y: int) -> bool:
+        """Check if starting cell can reach other empty cells"""
+        # If the cell itself is blocked by surrounding obstacles
+        if grid[x][y] == 1:
+            return False
+        
+        # Breadth-first search to check if we can reach another empty cell
         queue = [(x, y)]
         visited = {(x, y)}
         
@@ -56,23 +60,24 @@ def cleanRoom(grid: List[List[int]], r: int, c: int, direction: int) -> int:
             for dx, dy in directions:
                 new_x, new_y = curr_x + dx, curr_y + dy
                 
-                # Valid empty cell and not visited
+                # Valid coordinates and not visited
                 if (0 <= new_x < len(grid) and 
                     0 <= new_y < len(grid[0]) and 
-                    grid[new_x][new_y] == 0 and 
                     (new_x, new_y) not in visited):
                     
                     # Found reachable empty cell different from start
-                    if (new_x, new_y) != (x, y):
+                    if grid[new_x][new_y] == 0 and (new_x, new_y) != (x, y):
                         return True
                     
-                    queue.append((new_x, new_y))
-                    visited.add((new_x, new_y))
+                    # If same type as current cell (empty or blocked)
+                    if grid[new_x][new_y] == grid[x][y]:
+                        queue.append((new_x, new_y))
+                        visited.add((new_x, new_y))
         
         return False
     
     # Special case: if cannot move from current cell, return -1
-    if not can_move(r, c):
+    if not can_reach_empty_cell(r, c):
         return -1
     
     def dfs(x: int, y: int, current_dir: int, steps: int, visited: set) -> int:
