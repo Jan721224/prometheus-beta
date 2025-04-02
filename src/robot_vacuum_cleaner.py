@@ -13,7 +13,7 @@ def cleanRoom(grid: List[List[int]], r: int, c: int, direction: int) -> int:
     - direction (int): Initial direction of the robot (0: North, 1: East, 2: South, 3: West)
     
     Returns:
-    - int: Minimum number of steps required to clean the entire room
+    - int: Minimum number of steps required to clean the entire room, or -1 if impossible
     
     Raises:
     - ValueError: If the input grid is invalid or starting position is out of bounds
@@ -35,6 +35,10 @@ def cleanRoom(grid: List[List[int]], r: int, c: int, direction: int) -> int:
     # Track visited cells and total cleaned cells
     visited = set()
     total_empty_cells = sum(row.count(0) for row in grid)
+    
+    # If no empty cells, return -1
+    if total_empty_cells == 0:
+        return -1
     
     def is_valid_move(x: int, y: int) -> bool:
         """Check if a move is valid (within grid and not an obstacle)"""
@@ -71,5 +75,5 @@ def cleanRoom(grid: List[List[int]], r: int, c: int, direction: int) -> int:
     # Start cleaning from the initial position
     result = dfs(r, c, direction, 0)
     
-    # If not all cells could be cleaned
-    return result if result != float('inf') else -1
+    # If not all cells could be cleaned or no path found
+    return result if result != float('inf') and len(visited) == total_empty_cells else -1
