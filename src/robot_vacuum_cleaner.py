@@ -43,37 +43,36 @@ def cleanRoom(grid: List[List[int]], r: int, c: int, direction: int) -> int:
     if total_empty_cells == 0:
         return -1
     
-    def is_connected_empty_cells() -> bool:
-        """Check if empty cells form a connected component"""
-        def dfs(x: int, y: int, visited: set) -> None:
-            if (x, y) in visited or x < 0 or x >= len(grid) or y < 0 or y >= len(grid[0]) or grid[x][y] == 1:
-                return
+    def can_move(x: int, y: int) -> bool:
+        """Check if starting cell can move to any other empty cell"""
+        # Breadth-first search to check if we can reach any other empty cell
+        queue = [(x, y)]
+        visited = {(x, y)}
+        
+        while queue:
+            curr_x, curr_y = queue.pop(0)
             
-            visited.add((x, y))
-            
+            # Check all 4 directions
             for dx, dy in directions:
-                dfs(x + dx, y + dy, visited)
+                new_x, new_y = curr_x + dx, curr_y + dy
+                
+                # Valid empty cell and not visited
+                if (0 <= new_x < len(grid) and 
+                    0 <= new_y < len(grid[0]) and 
+                    grid[new_x][new_y] == 0 and 
+                    (new_x, new_y) not in visited):
+                    
+                    # Found reachable empty cell different from start
+                    if (new_x, new_y) != (x, y):
+                        return True
+                    
+                    queue.append((new_x, new_y))
+                    visited.add((new_x, new_y))
         
-        # Find first empty cell
-        start = None
-        for i in range(len(grid)):
-            for j in range(len(grid[0])):
-                if grid[i][j] == 0:
-                    start = (i, j)
-                    break
-            if start:
-                break
-        
-        if not start:
-            return False
-        
-        visited = set()
-        dfs(start[0], start[1], visited)
-        
-        return len(visited) == total_empty_cells
+        return False
     
-    # If empty cells are not connected, return -1
-    if not is_connected_empty_cells():
+    # Special case: if cannot move from current cell, return -1
+    if not can_move(r, c):
         return -1
     
     def dfs(x: int, y: int, current_dir: int, steps: int, visited: set) -> int:
