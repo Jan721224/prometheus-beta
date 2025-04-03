@@ -43,5 +43,5 @@ def test_remove_even_numbers_negative():
     """Test functionality with negative numbers."""
     arr = [-1, -2, -3, -4, 0, 1, 2]
     result = remove_even_numbers_and_sum(arr)
-    assert result == -6  # -2, -4, 0, 2
+    assert result == -4  # -2, -4, 0, 2
     assert arr == [-1, -3, 1]
