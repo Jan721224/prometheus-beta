@@ -25,10 +25,8 @@ def find_smallest_rounding_number(arr):
     current_sum = sum(arr)
     
     # Find the smallest positive number to round to next multiple of 5
-    for i in range(1, 6):  # Only need to check 1-5
-        if (current_sum + i) % 5 == 0:
-            return i
+    remainder = current_sum % 5
+    if remainder == 0:
+        return 5
     
-    # This should never happen due to modulo arithmetic 
-    # but included for completeness
-    return 5
+    return 5 - remainder
