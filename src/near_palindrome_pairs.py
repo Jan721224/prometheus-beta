@@ -29,38 +29,25 @@ def find_near_palindrome_pairs(strings):
         if s == s[::-1]:
             return False
         
-        # Check if changing one character can make it a palindrome
+        # Check exactly one character difference from palindrome
+        diff_count = 0
         for i in range(len(s) // 2):
             if s[i] != s[-(i+1)]:
-                # Try replacing either character
-                mod1 = s[:i] + s[-(i+1)] + s[i+1:]
-                mod2 = s[:-(i+1)] + s[i] + s[-i:]
-                
-                if mod1 == mod1[::-1] or mod2 == mod2[::-1]:
-                    return True
+                diff_count += 1
         
-        return False
+        # Exactly one pair of characters differs
+        return diff_count == 1
 
     # Find all pairs of near-palindromes
     near_palindrome_pairs = []
     for i in range(len(strings)):
         for j in range(i+1, len(strings)):
-            # Exact match is not allowed
+            # Exact match or case-sensitive match not allowed
             if strings[i] == strings[j]:
                 continue
             
-            # Check if both strings are near-palindromes together
-            if is_near_palindrome(strings[i]) or is_near_palindrome(strings[j]):
+            # Require both strings to be close to being palindromes
+            if is_near_palindrome(strings[i]) and is_near_palindrome(strings[j]):
                 near_palindrome_pairs.append([strings[i], strings[j]])
     
-    # Return unique pairs
-    unique_pairs = []
-    seen_pairs = set()
-    for pair in near_palindrome_pairs:
-        # Sort the pair to ensure unique representation
-        sorted_pair = tuple(sorted(pair))
-        if sorted_pair not in seen_pairs:
-            unique_pairs.append(pair)
-            seen_pairs.add(sorted_pair)
-    
-    return unique_pairs
+    return near_palindrome_pairs
