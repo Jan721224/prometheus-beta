@@ -29,25 +29,34 @@ def find_near_palindrome_pairs(strings):
         if s == s[::-1]:
             return False
         
-        # Check exactly one character difference from palindrome
-        diff_count = 0
-        for i in range(len(s) // 2):
-            if s[i] != s[-(i+1)]:
-                diff_count += 1
+        # Check if we can make a palindrome by changing one character
+        for i in range(len(s)):
+            for char in 'abcdefghijklmnopqrstuvwxyz':
+                # Try replacing the character at index i
+                mod_s = s[:i] + char + s[i+1:]
+                
+                # Check if modified string is a palindrome
+                if mod_s == mod_s[::-1] and mod_s != s:
+                    return True
         
-        # Exactly one pair of characters differs
-        return diff_count == 1
+        return False
 
-    # Find all pairs of near-palindromes
+    # Find unique pairs of near-palindromes
     near_palindrome_pairs = []
+    used_pairs = set()
+    
     for i in range(len(strings)):
         for j in range(i+1, len(strings)):
-            # Exact match or case-sensitive match not allowed
+            # Case-sensitive check
             if strings[i] == strings[j]:
                 continue
             
-            # Require both strings to be close to being palindromes
-            if is_near_palindrome(strings[i]) and is_near_palindrome(strings[j]):
-                near_palindrome_pairs.append([strings[i], strings[j]])
+            # Check if either string is a near-palindrome
+            # But don't use the same pair twice
+            pair = tuple(sorted([strings[i], strings[j]]))
+            if pair not in used_pairs:
+                if is_near_palindrome(strings[i]) or is_near_palindrome(strings[j]):
+                    near_palindrome_pairs.append([strings[i], strings[j]])
+                    used_pairs.add(pair)
     
     return near_palindrome_pairs
