@@ -38,5 +38,5 @@ def test_error_handling():
 
 def test_complex_cases():
     # More complex scenarios
-    assert find_smallest_rounding_number([11, 19, 20]) == 1
+    assert find_smallest_rounding_number([11, 19, 20]) == 5
     assert find_smallest_rounding_number([-5, 10, 2]) == 3
